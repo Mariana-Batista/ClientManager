@@ -1,65 +1,88 @@
-from app.database.conexao_db import criar_conexao
-from app.classes.modelo_clientes import Clientes
-from app.classes.modelo_enderecos import Endereco
+from database.conexao_db import criar_conexao
+from mysql.connector import Error
+from classes.modelo_clientes import Clientes
 
-def adicionar_cliente(cliente_obj):
-    session = criar_conexao()
-    try:
-        session.add(cliente_obj)
-        session.commit()
-        print("Cliente adicionado com sucesso!")
-    except Exception as e:
-        session.rollback()
-        print(f"Erro ao adicionar cliente: {e}")
-    finally:
-        session.close()
+def adicionar_cliente(nome, cpf, idade, email=None, telefone=None, endereco=None):
+    """Adiciona um novo cliente ao banco de dados."""
+    conexao = criar_conexao()
+    if conexao:
+        cursor = conexao.cursor()
+        sql = """INSERT INTO clientes (nome, cpf, idade, email, telefone, endereco)
+                 VALUES (%s, %s, %s, %s, %s, %s)"""
+        valores = (nome, cpf, idade, email, telefone, endereco)
+        
+        try:
+            cursor.execute(sql, valores)
+            conexao.commit()  # Confirma a transação
+            print("Cliente adicionado com sucesso!")
+        except Error as e:
+            print(f"Erro ao adicionar cliente: {e}")
+            conexao.rollback()  # Reverte a transação em caso de erro
+        finally:
+            cursor.close()
+            conexao.close()
+    else:
+        print("Não foi possível conectar ao banco de dados.")
 
 def buscar_cliente(cpf):
-    session = criar_conexao()
-    try:
-        cliente = session.query(Clientes).filter_by(cpf=cpf).first()
-        if cliente:
-            return cliente
-        else:
-            print("Cliente não encontrado.")
-    finally:
-        session.close()
+    """Busca um cliente pelo CPF no banco de dados."""
+    conexao = criar_conexao()
+    if conexao:
+        cursor = conexao.cursor()
+        sql = "SELECT * FROM clientes WHERE cpf = %s"
+        
+        try:
+            cursor.execute(sql, (cpf,))
+            resultado = cursor.fetchone()
+            if resultado:
+                print("Cliente encontrado:", resultado)
+            else:
+                print("Cliente não encontrado.")
+        except Error as e:
+            print(f"Erro ao buscar cliente: {e}")
+        finally:
+            cursor.close()
+            conexao.close()
 
-def atualizar_cliente(cpf, **kwargs):
-    session = criar_conexao()
-    try:
-        cliente = session.query(Clientes).filter_by(cpf=cpf).first()
-        if cliente:
-            for key, value in kwargs.items():
-                setattr(cliente, key, value)
-            session.commit()
-            print("Cliente atualizado com sucesso!")
-        else:
-            print("Cliente não encontrado.")
-    finally:
-        session.close()
+def atualizar_cliente(cpf, nome=None, idade=None, email=None, telefone=None, endereco=None):
+    """Atualiza as informações de um cliente no banco de dados."""
+    conexao = criar_conexao()
+    if conexao:
+        cursor = conexao.cursor()
+        sql = "UPDATE clientes SET nome = %s, idade = %s, email = %s, telefone = %s, endereco = %s WHERE cpf = %s"
+        valores = (nome, idade, email, telefone, endereco, cpf)
+        
+        try:
+            cursor.execute(sql, valores)
+            conexao.commit()  # Confirma a transação
+            if cursor.rowcount > 0:
+                print("Cliente atualizado no banco de dados.")
+            else:
+                print("Nenhum cliente encontrado com esse CPF.")
+        except Error as e:
+            print(f"Erro ao atualizar cliente: {e}")
+            conexao.rollback()  # Reverte a transação em caso de erro
+        finally:
+            cursor.close()
+            conexao.close()
 
 def deletar_cliente(cpf):
-    session = criar_conexao()
-    try:
-        cliente = session.query(Clientes).filter_by(cpf=cpf).first()
-        if cliente:
-            session.delete(cliente)
-            session.commit()
-            print("Cliente deletado com sucesso!")
-        else:
-            print("Cliente não encontrado.")
-    finally:
-        session.close()
-
-def adicionar_endereco(endereco_obj):
-    session = criar_conexao()
-    try:
-        session.add(endereco_obj)
-        session.commit()
-        print("Endereço adicionado com sucesso!")
-    except Exception as e:
-        session.rollback()
-        print(f"Erro ao adicionar endereço: {e}")
-    finally:
-        session.close()
+    """Deleta um cliente do banco de dados."""
+    conexao = criar_conexao()
+    if conexao:
+        cursor = conexao.cursor()
+        sql = "DELETE FROM clientes WHERE cpf = %s"
+        
+        try:
+            cursor.execute(sql, (cpf,))
+            conexao.commit()  # Confirma a transação
+            if cursor.rowcount > 0:
+                print("Cliente deletado do banco de dados.")
+            else:
+                print("Nenhum cliente encontrado com esse CPF.")
+        except Error as e:
+            print(f"Erro ao deletar cliente: {e}")
+            conexao.rollback()  # Reverte a transação em caso de erro
+        finally:
+            cursor.close()
+            conexao.close()

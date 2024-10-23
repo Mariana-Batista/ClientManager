@@ -39,7 +39,7 @@ class Menu:
         email = input("Digite o e-mail (ou Enter para deixar em branco): ") or None
         telefone = input("Digite o telefone (ou Enter para deixar em branco): ") or None
         endereco = input("Digite o endereço (ou Enter para deixar em branco): ") or None
-        profissao = input("Digite o endereço (ou Enter para deixar em branco): ") or None
+        profissao = input("Digite o profissão (ou Enter para deixar em branco): ") or None
         
         gerenciador.adicionar_cliente(nome, idade, email, telefone, endereco, profissao)  # Passa a idade como string
 

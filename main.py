@@ -1,5 +1,5 @@
 from app.menu_principal import Menu
-from app.database import criar_conexao
+from app.database.conexao_db import criar_conexao
 
 def executar_programa():
     menu = Menu()
