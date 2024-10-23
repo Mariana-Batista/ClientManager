@@ -1,4 +1,4 @@
-from gerenciador_clientes import GerenciadorDeClientes
+from app.gerenciador_clientes import GerenciadorDeClientes
 
 class Menu:
     def exibir_menu(self):
@@ -35,11 +35,13 @@ class Menu:
 
     def adicionar_cliente(self, gerenciador):
         nome = input("Digite o nome: ")
-        idade = input("Digite a idade: ")
+        idade = input("Digite a idade: ")  # Captura a idade como string
         email = input("Digite o e-mail (ou Enter para deixar em branco): ") or None
         telefone = input("Digite o telefone (ou Enter para deixar em branco): ") or None
         endereco = input("Digite o endereço (ou Enter para deixar em branco): ") or None
-        gerenciador.adicionar_cliente(nome, idade, email, telefone, endereco)
+        profissao = input("Digite o endereço (ou Enter para deixar em branco): ") or None
+        
+        gerenciador.adicionar_cliente(nome, idade, email, telefone, endereco, profissao)  # Passa a idade como string
 
     def buscar_cliente(self, gerenciador):
         chave = input("Digite o CPF do cliente para buscar: ")

@@ -1,7 +1,7 @@
-from classes.modelo_clientes import Clientes
-from classes.modelo_enderecos import Endereco
-from validador_dados import ValidadorDeDados
-from database.conexao_db import criar_conexao
+from app.classes.modelo_clientes import Clientes
+from app.classes.modelo_enderecos import Endereco
+from app.validador_dados import ValidadorDeDados
+from app.database.conexao_db import criar_conexao
 
 class GerenciadorDeClientes:
     def __init__(self):
@@ -10,21 +10,21 @@ class GerenciadorDeClientes:
         self.cpf_invalido = set() 
         self.conexao = criar_conexao()
         
-    def adicionar_cliente(self, nome: str, cpf: str, idade: int, email: str=None, telefone: str=None, endereco: str="", profissao: str=""):
+    def adicionar_cliente(self, nome: str, idade: str, email: str=None, telefone: str=None, endereco: str="", profissao: str=""):
         while True:
             cpf = input("Digite o CPF (11 dígitos): ")
             
             try:
-                
                 cpf = ValidadorDeDados.validar_cpf(cpf)                                      
                 
                 if cpf in self.clientes:
                     print('Cliente com o CPF já cadastrado!')
                     return
                 
-                #Validar dados inseridos
+                # Validar dados inseridos
                 nome = ValidadorDeDados.validar_nome(nome)
-                idade = ValidadorDeDados.validar_idade(idade)
+                idade = ValidadorDeDados.validar_idade(idade)  # A idade já é validada como inteiro
+                
                 email = ValidadorDeDados.validar_email(email)
                 telefone = ValidadorDeDados.validar_telefone(telefone)
                 endereco = ValidadorDeDados.validar_endereco(endereco)
@@ -43,6 +43,7 @@ class GerenciadorDeClientes:
                 if input('Deseja tentar novamente? (s/n): ').strip().lower() != 's':
                     print('Saindo do processo de adição do cliente.')
                     return
+
                 
     def buscar_cliente(self, chave: str):
         """Busca um cliente pelo CPF."""
@@ -64,7 +65,7 @@ class GerenciadorDeClientes:
             endereco = input("Digite o novo endereço (ou Enter para manter): ") or cliente.endereco
 
             try:
-                cliente.atualizar(nome, idade, email=email, telefone=telefone, endereco=endereco)
+                cliente.atualizar_dados(nome, idade, email=email, telefone=telefone, endereco=endereco)
                 print("Cliente atualizado com sucesso!")
             except ValueError as e:
                 print(f"Erro ao atualizar cliente: {e}")

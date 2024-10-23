@@ -12,12 +12,13 @@ class ValidadorDeDados:
     def validar_idade(idade):
         try:
             idade = int(idade)
-            
-            if idade < 18:
-                raise ValueError('A idade inserida é inválida! Deve ser maior que 18 anos.')
         except ValueError:
             raise ValueError('A idade inserida é inválida! Deve ser um número inteiro.')
+        if idade < 18:
+            raise ValueError('A idade inserida é inválida! Deve ser maior que 18 anos.')
+        
         return idade
+
     
     @staticmethod
     def validar_cpf(cpf):
